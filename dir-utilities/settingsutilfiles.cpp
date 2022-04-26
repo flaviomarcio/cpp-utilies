@@ -6,6 +6,7 @@ SettingsUtilFiles::SettingsUtilFiles(QObject *parent)
     connect(this, &SettingsUtilFiles::workDirChanged, this, &SettingsUtilFiles::save);
     connect(this, &SettingsUtilFiles::searchExtensionChanged, this, &SettingsUtilFiles::save);
     connect(this, &SettingsUtilFiles::changeIntoFilesChanged, this, &SettingsUtilFiles::save);
+    connect(this, &SettingsUtilFiles::showAllFilesChanged, this, &SettingsUtilFiles::save);
     connect(this, &SettingsUtilFiles::searchExpressionChanged, this, &SettingsUtilFiles::save);
     connect(this, &SettingsUtilFiles::searchTextChanged, this, &SettingsUtilFiles::save);
     connect(this, &SettingsUtilFiles::searchTextReplaceChanged, this, &SettingsUtilFiles::save);
@@ -117,4 +118,17 @@ void SettingsUtilFiles::setSearchTextReplace(const QString &newSearchTextReplace
 void SettingsUtilFiles::resetSearchTextReplace()
 {
     setSearchTextReplace({});
+}
+
+bool SettingsUtilFiles::showAllFiles() const
+{
+    return _showAllFiles;
+}
+
+void SettingsUtilFiles::setShowAllFiles(bool newShowAllFiles)
+{
+    if (_showAllFiles == newShowAllFiles)
+        return;
+    _showAllFiles = newShowAllFiles;
+    emit showAllFilesChanged();
 }

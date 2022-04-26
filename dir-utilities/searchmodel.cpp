@@ -33,16 +33,18 @@ QVector<QHash<int, QVariant>> searchPaths(const SettingsUtilFiles& settings)
         it.next();
         const auto info=it.fileInfo();
 
-        if(!settings.searchExpression().isEmpty()){
-            QRegularExpression re(settings.searchExpression());
-            QRegularExpressionMatch match = re.match(info.fileName());
-            if (!match.hasMatch())
-                continue;
-        }
+        if(!settings.showAllFiles()){
+            if(!settings.searchExpression().isEmpty()){
+                QRegularExpression re(settings.searchExpression());
+                QRegularExpressionMatch match = re.match(info.fileName());
+                if (!match.hasMatch())
+                    continue;
+            }
 
-        if(!settings.searchText().isEmpty()){
-            if(!info.fileName().contains(settings.searchText()))
-                continue;
+            if(!settings.searchText().isEmpty()){
+                if(!info.fileName().contains(settings.searchText()))
+                    continue;
+            }
         }
 
         auto v=QHash<int, QVariant>

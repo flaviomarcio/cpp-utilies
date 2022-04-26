@@ -33,16 +33,26 @@ Rectangle {
                         let dir=String(text).replace("file://","")
                     }
                 }
+            }
+            RowLayout{
+                Layout.fillHeight: true
+                Layout.fillWidth: true
                 TextField{
                     id: textSearchExtension
                     text: "*.*"
                     placeholderText: "Set extensions, ex: *.*"
                     Layout.fillHeight: true
                 }
+
                 CheckBox{
                     id: checkChangeIntoFiles
                     Layout.fillHeight: true
                     text: "Change into files"
+                }
+                CheckBox{
+                    id: checkShowAllFiles
+                    Layout.fillHeight: true
+                    text: "Show all files"
                 }
             }
             RowLayout{
@@ -53,6 +63,7 @@ Rectangle {
                     placeholderText: "Search expression"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
+                    enabled: !checkShowAllFiles.checked
                 }
                 TextField{
                     id: textSearchText
@@ -109,6 +120,7 @@ Rectangle {
                 textWorkDir.text=settings.workDir
                 textSearchExtension.text=settings.searchExtension
                 checkChangeIntoFiles.checked=settings.changeIntoFiles
+                checkShowAllFiles.checked=settings.showAllFiles
                 textSearchExpression.text=settings.searchExpression
                 textSearchText.text=settings.searchText
                 textSearchTextReplace.text=settings.searchTextReplace
@@ -116,6 +128,7 @@ Rectangle {
                 settings.workDir=Qt.binding(function(){ return textWorkDir.text })
                 settings.searchExtension=Qt.binding(function(){ return textSearchExtension.text })
                 settings.changeIntoFiles=Qt.binding(function(){ return checkChangeIntoFiles.checked })
+                settings.showAllFiles=Qt.binding(function(){ return checkShowAllFiles.checked })
                 settings.searchExpression=Qt.binding(function(){ return textSearchExpression.text })
                 settings.searchText=Qt.binding(function(){ return textSearchText.text })
                 settings.searchTextReplace=Qt.binding(function(){ return textSearchTextReplace.text })

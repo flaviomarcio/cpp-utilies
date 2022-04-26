@@ -13,6 +13,7 @@ class SettingsUtilFiles : public Settings
     Q_PROPERTY(QString searchExpression READ searchExpression WRITE setSearchExpression RESET resetSearchExpression NOTIFY searchExpressionChanged)
     Q_PROPERTY(QString searchText READ searchText WRITE setSearchText RESET resetSearchText NOTIFY searchTextChanged)
     Q_PROPERTY(QString searchTextReplace READ searchTextReplace WRITE setSearchTextReplace RESET resetSearchTextReplace NOTIFY searchTextReplaceChanged)
+    Q_PROPERTY(bool showAllFiles READ showAllFiles WRITE setShowAllFiles NOTIFY showAllFilesChanged)
 
 public:
     Q_INVOKABLE explicit SettingsUtilFiles(QObject *parent = nullptr);
@@ -42,6 +43,9 @@ public:
     void setSearchTextReplace(const QString &newSearchTextReplace);
     void resetSearchTextReplace();
 
+    bool showAllFiles() const;
+    void setShowAllFiles(bool newShowAllFiles);
+
 signals:
 
     void workDirChanged();
@@ -50,6 +54,8 @@ signals:
     void searchExpressionChanged();
     void searchTextChanged();
     void searchTextReplaceChanged();
+    void showAllFilesChanged();
+
 private:
     QString _workDir=QString("%1/qtreforce.mfe").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
     QString _searchExtension="*.h, *.cpp, *.qml";
@@ -57,7 +63,7 @@ private:
     QString _searchExpression;
     QString _searchText;
     QString _searchTextReplace;
-
+    bool _showAllFiles=true;
 };
 
 #endif // SETTINGSUTILFILES_H
