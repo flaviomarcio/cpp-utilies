@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
+import dirUtilities 1.0
 
 Window {
     width: 640

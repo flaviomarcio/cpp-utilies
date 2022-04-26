@@ -6,20 +6,20 @@
 #include <QHash>
 #include <QAbstractItemModel>
 #include <QStandardPaths>
+#include "settingsutilfiles.h"
 
 class SearchModel : public QAbstractTableModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString rootDir READ rootDir WRITE setRootDir RESET resetRootDir NOTIFY rootDirChanged)
-    Q_PROPERTY(QString ext READ ext WRITE setExt RESET resetExt NOTIFY extChanged)
-    Q_PROPERTY(bool changeIntoFiles READ changeIntoFiles WRITE setChangeIntoFiles RESET resetChangeIntoFiles NOTIFY changeIntoFilesChanged)
-    Q_PROPERTY(QString expression READ expression WRITE setExpression RESET resetExpression NOTIFY expressionChanged)
+    Q_PROPERTY(SettingsUtilFiles* settings READ settings WRITE setSettings RESET resetSettings NOTIFY settingsChanged)
+
 public:
 
     enum Roles{
         FileName=Qt::UserRole+1,
-        FilePath=Qt::DisplayRole+2
+        FilePath=Qt::DisplayRole+2,
+        Path=Qt::DisplayRole+3
     };
 
     explicit SearchModel(QObject *parent = nullptr);
@@ -34,26 +34,15 @@ public:
 
     Q_INVOKABLE void clear();
 
-    Q_INVOKABLE void search();
 
     Q_INVOKABLE void rename(const QString &replaceText, const QString &newText);
 
-    const QString &rootDir() const;
-    void setRootDir(const QString &newRootDir);
-    void resetRootDir();
+    SettingsUtilFiles *settings();
+    void setSettings(const SettingsUtilFiles *newSettings);
+    void resetSettings();
 
-    const QString &ext() const;
-    void setExt(const QString &newExt);
-    void resetExt();
-
-    bool changeIntoFiles();
-    void setChangeIntoFiles(const bool &newChangeIntoFiles);
-    void resetChangeIntoFiles();
-
-    const QString &expression() const;
-    void setExpression(const QString &newExpression);
-    void resetExpression();
-
+public slots:
+    Q_INVOKABLE void search();
 private:
     QHash<int, QByteArray> roles=
     {
@@ -61,14 +50,8 @@ private:
         {FilePath,"FilePath"}, {FilePath,"filePath"}
     };
     QVector<QHash<int, QVariant>> rows;
-    QString _rootDir=QString("%1/qtreforce.mfe").arg(QStandardPaths::writableLocation(QStandardPaths::HomeLocation));
-    QString _ext="*.h, *.cpp, *.qml";
-    bool _changeIntoFiles=true;
-    QString _expression;
+    SettingsUtilFiles _settings;
 
 signals:
-    void rootDirChanged();
-    void extChanged();
-    void changeIntoFilesChanged();
-    void expressionChanged();
+    void settingsChanged();
 };

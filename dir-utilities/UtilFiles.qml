@@ -34,7 +34,7 @@ Rectangle {
                     }
                 }
                 TextField{
-                    id: textExtention
+                    id: textSearchExtension
                     text: "*.*"
                     placeholderText: "Set extensions, ex: *.*"
                     Layout.fillHeight: true
@@ -49,19 +49,19 @@ Rectangle {
                 Layout.fillHeight: true
                 Layout.fillWidth: true
                 TextField{
-                    id: textExpression
+                    id: textSearchExpression
                     placeholderText: "Search expression"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                 }
                 TextField{
-                    id: textReplaceText
+                    id: textSearchText
                     placeholderText: "Search text"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
                 }
                 TextField{
-                    id: textNewText
+                    id: textSearchTextReplace
                     placeholderText: "Text to replace"
                     Layout.fillHeight: true
                     Layout.fillWidth: true
@@ -91,44 +91,38 @@ Rectangle {
                             text: "Rename"
                             Layout.fillHeight: true
                             Layout.fillWidth: true
-                            onClicked: searchModel.rename(textReplaceText.text, textNewText.text)
+                            onClicked: searchModel.rename(textSearchText.text, textSearchTextReplace.text)
                         }
                     }
                 }
             }
         }
 
-//        FolderListModel {
-//            id: folderModel
-//            nameFilters:{
-//                if(!String(textExtention.text).trim())
-//                    return ["*.*"];
-//                try {
-//                    return JSON.parse(textExtention.text)
-//                }
-//                catch(err) {
-//                    return [textExtention.text]
-//                }
-//            }
-//        }
+
+
 
         SearchModel{
             id: searchModel
-            Component.onCompleted: {
-                textWorkDir.text=searchModel.rootDir
-                searchModel.rootDir=Qt.binding(function(){ return textWorkDir.text })
 
-                textExtention.text=searchModel.ext
-                searchModel.ext=Qt.binding(function(){ return textExtention.text })
 
-                textExpression.text=searchModel.expression
-                searchModel.expression=Qt.binding(function(){ return textExpression.text })
+            function setData(){
+                textWorkDir.text=settings.workDir
+                textSearchExtension.text=settings.searchExtension
+                checkChangeIntoFiles.checked=settings.changeIntoFiles
+                textSearchExpression.text=settings.searchExpression
+                textSearchText.text=settings.searchText
+                textSearchTextReplace.text=settings.searchTextReplace
 
-                checkChangeIntoFiles.checked=searchModel.changeIntoFiles
-                searchModel.changeIntoFiles=Qt.binding(function(){ return checkChangeIntoFiles.checked })
+                settings.workDir=Qt.binding(function(){ return textWorkDir.text })
+                settings.searchExtension=Qt.binding(function(){ return textSearchExtension.text })
+                settings.changeIntoFiles=Qt.binding(function(){ return checkChangeIntoFiles.checked })
+                settings.searchExpression=Qt.binding(function(){ return textSearchExpression.text })
+                settings.searchText=Qt.binding(function(){ return textSearchText.text })
+                settings.searchTextReplace=Qt.binding(function(){ return textSearchTextReplace.text })
 
                 searchModel.search();
             }
+
         }
 
         ListView{
@@ -197,7 +191,7 @@ Rectangle {
                                 }
                                 Label{
                                     Layout.fillHeight: true
-                                    text: String(fileName).replace(textReplaceText.text, textNewText.text)
+                                    text: String(fileName).replace(textSearchText.text, textSearchTextReplace.text)
                                 }
                             }
                         }
@@ -206,4 +200,5 @@ Rectangle {
             }
         }
     }
+    Component.onCompleted: searchModel.setData()
 }

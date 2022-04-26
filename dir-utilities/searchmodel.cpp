@@ -5,58 +5,51 @@
 #include <QDirIterator>
 #include <QCoreApplication>
 
-QVector<QHash<int, QVariant>> searchPaths(const QString&rootDir, const QVariant&extention, const QString&expression)
+QVector<QHash<int, QVariant>> searchPaths(const SettingsUtilFiles& settings)
 {
     QVector<QHash<int, QVariant>> __return;
-    QDir dir(rootDir);
+    QDir dir(settings.workDir());
     if(!dir.exists())
-        dir.mkpath(rootDir);
+        dir.mkpath(settings.workDir());
 
     if(!dir.exists())
         return {};
 
-    QStringList ext;
-    switch (extention.typeId()) {
-    case QMetaType::QStringList:
-    case QMetaType::QVariantList:{
-        for(auto&v:extention.toList()){
-            auto s=v.toString().trimmed();
-            if(s.isEmpty())
-                continue;
+    QStringList searchExtension;
+    auto s=settings.searchExtension().trimmed().simplified();
+    for(auto&v:s.split(",")){
+        auto s=v.trimmed();
+        if(s.isEmpty())
+            continue;
+        searchExtension.append(s);
+    }
 
-            ext.append(s);
-        }
-        break;
-    }
-    default:
-        auto s=extention.toString().trimmed();
-        for(auto&v:s.split(",")){
-            auto s=v.trimmed();
-            if(s.isEmpty())
-                continue;
-            ext.append(s);
-        }
-    }
-    if(ext.isEmpty())
-        ext.append("*.*");
+    if(searchExtension.isEmpty())
+        searchExtension.append("*.*");
 
     //find paths where contains configuration files
-    QDirIterator it(rootDir, ext, QDir::Files, QDirIterator::Subdirectories);
+    QDirIterator it(settings.workDir(), searchExtension, QDir::Files, QDirIterator::Subdirectories);
     while (it.hasNext()){
         it.next();
         const auto info=it.fileInfo();
 
-        if(!expression.isEmpty()){
-            QRegularExpression re(expression);
+        if(!settings.searchExpression().isEmpty()){
+            QRegularExpression re(settings.searchExpression());
             QRegularExpressionMatch match = re.match(info.fileName());
             if (!match.hasMatch())
+                continue;
+        }
+
+        if(!settings.searchText().isEmpty()){
+            if(!info.fileName().contains(settings.searchText()))
                 continue;
         }
 
         auto v=QHash<int, QVariant>
         {
             {SearchModel::FileName, info.fileName()},
-            {SearchModel::FilePath, info.filePath()}
+            {SearchModel::FilePath, info.filePath()},
+            {SearchModel::Path, info.path()}
         };
         __return.append(v);
     }
@@ -66,7 +59,7 @@ QVector<QHash<int, QVariant>> searchPaths(const QString&rootDir, const QVariant&
 SearchModel::SearchModel(QObject *parent)
     : QAbstractTableModel{parent}
 {
-
+    connect(&this->_settings, &SettingsUtilFiles::saved, this, &SearchModel::search);
 }
 
 QModelIndex SearchModel::index(int row, int column, const QModelIndex &parent) const
@@ -118,92 +111,36 @@ void SearchModel::search()
 {
     this->clear();
     this->beginResetModel();
-    this->rows=searchPaths(this->_rootDir, this->_ext, this->_expression);
+    this->rows=searchPaths(this->_settings);
     this->endResetModel();
 }
 
 void SearchModel::rename(const QString&replaceText, const QString&newText)
 {
     for(auto&v:this->rows){
-        auto srcFile=v.value(FileName).toString();
-        auto renFile=srcFile.replace(replaceText, newText);
-        QFile::rename(srcFile, renFile);
+        auto path=v.value(Path).toString();
+        auto fileName=v.value(FileName).toString();
+        auto srcFile=fileName;
+        auto renFile=fileName.replace(replaceText, newText);
+        QFile::rename(path+"/"+srcFile, path+"/"+renFile);
     }
     this->search();
 }
 
-const QString &SearchModel::rootDir() const
+SettingsUtilFiles *SearchModel::settings()
 {
-    return _rootDir;
+    return &_settings;
 }
 
-void SearchModel::setRootDir(const QString &newRootDir)
+void SearchModel::setSettings(const SettingsUtilFiles *newSettings)
 {
-    if (_rootDir == newRootDir)
-        return;
-    _rootDir = newRootDir;
-    this->search();
-    emit rootDirChanged();
+//    if (_settings == newSettings)
+//        return;
+//    _settings = newSettings;
+    emit settingsChanged();
 }
 
-void SearchModel::resetRootDir()
+void SearchModel::resetSettings()
 {
-    setRootDir({}); // TODO: Adapt to use your actual default value
-}
-
-const QString &SearchModel::ext() const
-{
-    return _ext;
-}
-
-void SearchModel::setExt(const QString &newExt)
-{
-    if (_ext == newExt)
-        return;
-    _ext = newExt;
-    this->search();
-    emit extChanged();
-}
-
-void SearchModel::resetExt()
-{
-    setExt({}); // TODO: Adapt to use your actual default value
-}
-
-bool SearchModel::changeIntoFiles()
-{
-    return _changeIntoFiles;
-}
-
-void SearchModel::setChangeIntoFiles(const bool &newChangeIntoFiles)
-{
-    if (_changeIntoFiles == newChangeIntoFiles)
-        return;
-    _changeIntoFiles = newChangeIntoFiles;
-    this->search();
-    emit extChanged();
-}
-
-void SearchModel::resetChangeIntoFiles()
-{
-    setChangeIntoFiles({}); // TODO: Adapt to use your actual default value
-}
-
-const QString &SearchModel::expression() const
-{
-    return _expression;
-}
-
-void SearchModel::setExpression(const QString &newExpression)
-{
-    if (_expression == newExpression)
-        return;
-    _expression = newExpression;
-    this->search();
-    emit expressionChanged();
-}
-
-void SearchModel::resetExpression()
-{
-    setExpression({}); // TODO: Adapt to use your actual default value
+    setSettings({});
 }
