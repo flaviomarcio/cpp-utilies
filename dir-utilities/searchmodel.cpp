@@ -124,6 +124,9 @@ void SearchModel::rename(const QString&replaceText, const QString&newText)
         auto srcFile=fileName;
         auto renFile=fileName.replace(replaceText, newText);
 
+        if(renFile==srcFile)
+            continue;
+
         if(_settings.changeIntoFiles()){
             QFile file(path+"/"+srcFile);
             if(!file.open(file.ReadOnly)){
