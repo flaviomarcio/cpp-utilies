@@ -123,6 +123,26 @@ void SearchModel::rename(const QString&replaceText, const QString&newText)
         auto fileName=v.value(FileName).toString();
         auto srcFile=fileName;
         auto renFile=fileName.replace(replaceText, newText);
+
+        if(_settings.changeIntoFiles()){
+            QFile file(path+"/"+srcFile);
+            if(!file.open(file.ReadOnly)){
+                qWarning()<<file.errorString();
+            }
+            auto bytes=file.readAll();
+            file.close();
+            if(bytes.contains(_settings.searchText().toUtf8())){
+                bytes=bytes.replace(_settings.searchText().toUtf8(), _settings.searchTextReplace().toUtf8());
+                if(!file.open(file.Truncate | file.WriteOnly)){
+                    qWarning()<<file.errorString();
+                }
+                file.write(bytes);
+                file.flush();
+                file.close();
+            }
+        }
+
+
         QFile::rename(path+"/"+srcFile, path+"/"+renFile);
     }
     this->search();
