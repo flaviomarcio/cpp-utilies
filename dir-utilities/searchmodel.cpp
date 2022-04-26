@@ -59,6 +59,7 @@ QVector<QHash<int, QVariant>> searchPaths(const SettingsUtilFiles& settings)
 SearchModel::SearchModel(QObject *parent)
     : QAbstractTableModel{parent}
 {
+    this->_settings.load();
     connect(&this->_settings, &SettingsUtilFiles::saved, this, &SearchModel::search);
 }
 

@@ -3,7 +3,7 @@
 Settings::Settings(QObject *parent)
     : QObject{parent}
 {
-    this->load();
+
 }
 
 void Settings::save()
