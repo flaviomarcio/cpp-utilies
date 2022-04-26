@@ -131,6 +131,7 @@ void SearchModel::rename(const QString&replaceText, const QString&newText)
             QFile file(path+"/"+srcFile);
             if(!file.open(file.ReadOnly)){
                 qWarning()<<file.errorString();
+                return;
             }
             auto bytes=file.readAll();
             file.close();
@@ -138,6 +139,7 @@ void SearchModel::rename(const QString&replaceText, const QString&newText)
                 bytes=bytes.replace(_settings.searchText().toUtf8(), _settings.searchTextReplace().toUtf8());
                 if(!file.open(file.Truncate | file.WriteOnly)){
                     qWarning()<<file.errorString();
+                    return;
                 }
                 file.write(bytes);
                 file.flush();
