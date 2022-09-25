@@ -1,9 +1,10 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import QtQuick.Controls.Material
 import dirUtilities 1.0
 
-Window {
+ApplicationWindow {
     width: 640
     height: 480
     visible: true
@@ -12,36 +13,37 @@ Window {
     Material.theme: Material.System
     Material.accent: Material.LightBlue
 
-    Item {
+    header: TabBar {
+        id: tabBar
+        Layout.fillWidth: true
+        TabButton {
+            text: qsTr("QtLibs")
+        }
+        TabButton {
+            text: qsTr("DirUtil")
+        }
+    }
+
+    ColumnLayout {
+        id: layout
         anchors.fill: parent
-        TabBar{
-            id: tabBar
-            height: 40
-            anchors{
-                top: parent.top
-                left: parent.left
-                right: parent.right
-            }
-            TabButton{
-                text: "Rename"
-                width: 100
-                anchors{
-                    top: parent.top
-                    bottom: parent.bottom
-                }
-            }
+        Rectangle{
+            Layout.fillWidth: true
+            height: 1
+            color: "lightGray"
         }
         SwipeView{
             id: swipeView
+            interactive: false
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
             currentIndex: tabBar.currentIndex
-            anchors{
-                top: tabBar.bottom
-                left: parent.left
-                right: parent.right
-                bottom: parent.bottom
+            UtilQt{
+                clip: true
             }
             UtilFiles{
-
+                clip: true
             }
         }
     }

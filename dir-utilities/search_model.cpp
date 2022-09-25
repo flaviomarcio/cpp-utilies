@@ -1,11 +1,11 @@
-#include "./searchmodel.h"
+#include "./search_model.h"
 #include <QDir>
 #include <QDebug>
 #include <QRegularExpressionMatch>
 #include <QDirIterator>
 #include <QCoreApplication>
 
-QVector<QHash<int, QVariant>> searchPaths(const SettingsUtilFiles& settings)
+QVector<QHash<int, QVariant>> searchPaths(const SearchModelSettings& settings)
 {
     QVector<QHash<int, QVariant>> __return;
     QDir dir(settings.workDir());
@@ -62,7 +62,7 @@ SearchModel::SearchModel(QObject *parent)
     : QAbstractTableModel{parent}
 {
     this->_settings.load();
-    connect(&this->_settings, &SettingsUtilFiles::saved, this, &SearchModel::search);
+    connect(&this->_settings, &SearchModelSettings::saved, this, &SearchModel::search);
 }
 
 QModelIndex SearchModel::index(int row, int column, const QModelIndex &parent) const
@@ -126,8 +126,8 @@ void SearchModel::rename(const QString&replaceText, const QString&newText)
         auto srcFile=fileName;
         auto renFile=fileName.replace(replaceText, newText);
 
-        if(renFile==srcFile)
-            continue;
+//        if(renFile==srcFile)
+//            continue;
 
         if(_settings.changeIntoFiles()){
             QFile file(path+"/"+srcFile);
@@ -155,12 +155,12 @@ void SearchModel::rename(const QString&replaceText, const QString&newText)
     this->search();
 }
 
-SettingsUtilFiles *SearchModel::settings()
+SearchModelSettings *SearchModel::settings()
 {
     return &_settings;
 }
 
-void SearchModel::setSettings(const SettingsUtilFiles *newSettings)
+void SearchModel::setSettings(const SearchModelSettings *newSettings)
 {
 //    if (_settings == newSettings)
 //        return;

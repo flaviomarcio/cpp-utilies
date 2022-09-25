@@ -6,13 +6,13 @@
 #include <QHash>
 #include <QAbstractItemModel>
 #include <QStandardPaths>
-#include "settingsutilfiles.h"
+#include "search_qt_lib_model_setting.h"
 
-class SearchModel : public QAbstractTableModel
+class SearchQtLibModel : public QAbstractTableModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(SettingsUtilFiles* settings READ settings WRITE setSettings RESET resetSettings NOTIFY settingsChanged)
+    Q_PROPERTY(SearchQtLibModelSettings* settings READ settings WRITE setSettings RESET resetSettings NOTIFY settingsChanged)
 
 public:
 
@@ -22,7 +22,7 @@ public:
         Path=Qt::DisplayRole+3
     };
 
-    explicit SearchModel(QObject *parent = nullptr);
+    explicit SearchQtLibModel(QObject *parent = nullptr);
 
     QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -37,8 +37,8 @@ public:
 
     Q_INVOKABLE void rename(const QString &replaceText, const QString &newText);
 
-    SettingsUtilFiles *settings();
-    void setSettings(const SettingsUtilFiles *newSettings);
+    SearchQtLibModelSettings *settings();
+    void setSettings(const SearchQtLibModelSettings *newSettings);
     void resetSettings();
 
 public slots:
@@ -50,8 +50,10 @@ private:
         {FilePath,"FilePath"}, {FilePath,"filePath"}
     };
     QVector<QHash<int, QVariant>> rows;
-    SettingsUtilFiles _settings;
+    SearchQtLibModelSettings _settings;
+
 
 signals:
     void settingsChanged();
+    void nameChanged();
 };

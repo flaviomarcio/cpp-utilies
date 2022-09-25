@@ -5,6 +5,7 @@ import QtQuick.Controls.Material
 import Qt.labs.folderlistmodel
 import Qt.labs.platform
 import Utils 0.0
+import Qt.labs.folderlistmodel 2.3
 
 Item {
     id: name
@@ -21,63 +22,24 @@ Item {
             Layout.fillWidth: true
             TextField{
                 id: textWorkDir
-                placeholderText: "Set work dir"
+                placeholderText: "Set QtDir"
                 Layout.fillHeight: true
                 Layout.fillWidth: true
-                text: StandardPaths.writableLocation(StandardPaths.AppDataLocation);
-                onTextChanged: {
-                    let dir=String(text).replace("file://","")
-                }
+                text: StandardPaths.writableLocation(StandardPaths.HomeLocation)+"/Qt";
             }
-        }
-        RowLayout{
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+            TextField{
+                id: textDestineDir
+                placeholderText: "Set QtLibs"
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                text: StandardPaths.writableLocation(StandardPaths.HomeLocation)+"/erp-worker/binary/qt-lib";
+            }
             TextField{
                 id: textSearchExtension
-                text: "*.*"
+                text: "*.so"
                 placeholderText: "Set extensions, ex: *.*"
                 Layout.fillHeight: true
             }
-
-            CheckBox{
-                id: checkChangeIntoFiles
-                Layout.fillHeight: true
-                text: "Change into files"
-            }
-            CheckBox{
-                id: checkShowAllFiles
-                Layout.fillHeight: true
-                text: "Show all files"
-            }
-        }
-        RowLayout{
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            TextField{
-                id: textSearchExpression
-                placeholderText: "Search expression"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-                enabled: !checkShowAllFiles.checked
-            }
-            TextField{
-                id: textSearchText
-                placeholderText: "Search text"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-            TextField{
-                id: textSearchTextReplace
-                placeholderText: "Text to replace"
-                Layout.fillHeight: true
-                Layout.fillWidth: true
-            }
-        }
-        RowLayout{
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
         }
         ToolBar{
             Layout.fillHeight: true
@@ -95,10 +57,10 @@ Item {
                     Layout.fillWidth: true
                     //layoutDirection: Qt.RightToLeft
                     ToolButton{
-                        text: "Rename"
+                        text: "Copy"
                         Layout.fillHeight: true
                         Layout.fillWidth: true
-                        onClicked: searchModel.rename(textSearchText.text, textSearchTextReplace.text)
+                        //onClicked: searchModel.rename(textSearchText.text, textSearchTextReplace.text)
                     }
                 }
             }
@@ -108,26 +70,27 @@ Item {
 
 
 
-    SearchModel{
+    SearchQtLibModel{
         id: searchModel
-        settings.name: "UtilFiles"
+        settings.name: "UtilQt"
+
 
         function setData(){
-            textWorkDir.text=settings.workDir
-            textSearchExtension.text=settings.searchExtension
-            checkChangeIntoFiles.checked=settings.changeIntoFiles
-            checkShowAllFiles.checked=settings.showAllFiles
-            textSearchExpression.text=settings.searchExpression
-            textSearchText.text=settings.searchText
-            textSearchTextReplace.text=settings.searchTextReplace
+//            textWorkDir.text=settings.workDir
+//            textSearchExtension.text=settings.searchExtension
+//            checkChangeIntoFiles.checked=settings.changeIntoFiles
+//            checkShowAllFiles.checked=settings.showAllFiles
+//            textSearchExpression.text=settings.searchExpression
+//            textSearchText.text=settings.searchText
+//            textSearchTextReplace.text=settings.searchTextReplace
 
             settings.workDir=Qt.binding(function(){ return textWorkDir.text })
             settings.searchExtension=Qt.binding(function(){ return textSearchExtension.text })
-            settings.changeIntoFiles=Qt.binding(function(){ return checkChangeIntoFiles.checked })
-            settings.showAllFiles=Qt.binding(function(){ return checkShowAllFiles.checked })
-            settings.searchExpression=Qt.binding(function(){ return textSearchExpression.text })
-            settings.searchText=Qt.binding(function(){ return textSearchText.text })
-            settings.searchTextReplace=Qt.binding(function(){ return textSearchTextReplace.text })
+//            settings.changeIntoFiles=Qt.binding(function(){ return checkChangeIntoFiles.checked })
+//            settings.showAllFiles=Qt.binding(function(){ return checkShowAllFiles.checked })
+//            settings.searchExpression=Qt.binding(function(){ return textSearchExpression.text })
+//            settings.searchText=Qt.binding(function(){ return textSearchText.text })
+//            settings.searchTextReplace=Qt.binding(function(){ return textSearchTextReplace.text })
 
             searchModel.search();
         }

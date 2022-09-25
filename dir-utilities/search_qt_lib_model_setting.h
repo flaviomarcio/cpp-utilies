@@ -1,9 +1,8 @@
-#ifndef SETTINGSUTILFILES_H
-#define SETTINGSUTILFILES_H
+#pragma once
 
 #include "./settings.h"
 
-class SettingsUtilFiles : public Settings
+class SearchQtLibModelSettings : public Settings
 {
     Q_OBJECT
 
@@ -16,7 +15,7 @@ class SettingsUtilFiles : public Settings
     Q_PROPERTY(bool showAllFiles READ showAllFiles WRITE setShowAllFiles NOTIFY showAllFilesChanged)
 
 public:
-    Q_INVOKABLE explicit SettingsUtilFiles(QObject *parent = nullptr);
+    Q_INVOKABLE explicit SearchQtLibModelSettings(QObject *parent = nullptr);
 
 
     const QString workDir() const;
@@ -65,5 +64,3 @@ private:
     QString _searchTextReplace;
     bool _showAllFiles=true;
 };
-
-#endif // SETTINGSUTILFILES_H

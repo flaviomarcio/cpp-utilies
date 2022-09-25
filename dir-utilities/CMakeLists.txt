@@ -8,19 +8,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
 
 qt_add_executable(appdirUtilities
-    searchmodel.h
-    searchmodel.cpp
-    settings.h
-    settings.cpp
-    settingsutilfiles.h
-    settingsutilfiles.cpp
     main.cpp
+    settings.h settings.cpp
+    search_model.h search_model.cpp
+    search_model_settings.h search_model_settings.cpp
+    search_qt_lib_model.h search_qt_lib_model.cpp
+    search_qt_lib_model_setting.h search_qt_lib_model_setting.cpp
+
 )
 
 qt_add_qml_module(appdirUtilities
     URI dirUtilities
     VERSION 1.0
-    QML_FILES main.qml UtilFiles.qml
+    QML_FILES main.qml UtilFiles.qml UtilQt.qml
 )
 
 set_target_properties(appdirUtilities PROPERTIES

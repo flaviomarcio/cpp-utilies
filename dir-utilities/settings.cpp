@@ -23,7 +23,7 @@ void Settings::save()
     if(!dir.exists())
         dir.mkdir(sDir);
 
-    auto fileName=QString("%1/settings.json").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    auto fileName=QString("%1/%2.settings.json").arg(_name, QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     QFile file(fileName);
     if(!file.open(file.Truncate | file.WriteOnly)){
         qWarning()<<file.errorString();
@@ -39,7 +39,7 @@ void Settings::save()
 
 void Settings::load()
 {
-    auto fileName=QString("%1/settings.json").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    auto fileName=QString("%1/%s.settings.json").arg(_name, QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
     QFile file(fileName);
 
     if(!file.exists()){
@@ -62,4 +62,22 @@ void Settings::load()
     }
 
     emit loaded();
+}
+
+const QString &Settings::name() const
+{
+    return _name;
+}
+
+void Settings::setName(const QString &newName)
+{
+    if (_name == newName)
+        return;
+    _name = newName;
+    emit nameChanged();
+}
+
+void Settings::resetName()
+{
+    setName({}); // TODO: Adapt to use your actual default value
 }
