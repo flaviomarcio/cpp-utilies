@@ -6,6 +6,14 @@ Settings::Settings(QObject *parent)
 
 }
 
+QString Settings::fileName() const
+{
+    if(!this->_name.trimmed().isEmpty())
+        return QString("%1/%2.settings.json").arg(_name, QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    return QString("%1.settings.json").arg(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+
+}
+
 void Settings::save()
 {
     static const QByteArray propertyObjectName="objectName";
@@ -23,7 +31,7 @@ void Settings::save()
     if(!dir.exists())
         dir.mkdir(sDir);
 
-    auto fileName=QString("%1/%2.settings.json").arg(_name, QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    auto fileName=this->fileName();
     QFile file(fileName);
     if(!file.open(file.Truncate | file.WriteOnly)){
         qWarning()<<file.errorString();
@@ -39,7 +47,7 @@ void Settings::save()
 
 void Settings::load()
 {
-    auto fileName=QString("%1/%s.settings.json").arg(_name, QStandardPaths::writableLocation(QStandardPaths::AppDataLocation));
+    auto fileName=this->fileName();
     QFile file(fileName);
 
     if(!file.exists()){

@@ -16,6 +16,8 @@ class Settings : public QObject
 public:
     Q_INVOKABLE explicit Settings(QObject *parent = nullptr);
 
+    QString fileName() const;
+
     const QString &name() const;
     void setName(const QString &newName);
     void resetName();
